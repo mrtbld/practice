@@ -16,11 +16,14 @@
 class Solution:
     # t:O(n), s:O(n)
     def twoSum(self, nums, target):
+        inversed = dict()
         # t:O(n), s:O(n)
-        inversed = dict((n, i) for (i, n) in enumerate(nums))
-        # t:O(n), s:O(1)
-        for i, n in enumerate(nums): # t:O(n)
+        for i, n in enumerate(nums): # t:O(n), s:O(n)
             if target - n in inversed: # t:O(1)
                 j = inversed[target - n] # t:O(1)
                 if i != j:
-                    return [i, j]
+                    return [j, i]
+            inversed[n] = i # t:O(1)
+
+print(Solution().twoSum([2, 7, 11, 15], 9))
+print(Solution().twoSum([3, 2, 4], 6))
