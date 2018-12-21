@@ -14,9 +14,13 @@
 #     return [0, 1].
 
 class Solution:
+    # t:O(n), s:O(n)
     def twoSum(self, nums, target):
-        # O(n*n)
-        for i, a in enumerate(nums):
-            for j, b in enumerate(nums[i+1:], i+1):
-                if a + b == target:
+        # t:O(n), s:O(n)
+        inversed = dict((n, i) for (i, n) in enumerate(nums))
+        # t:O(n), s:O(1)
+        for i, n in enumerate(nums): # t:O(n)
+            if target - n in inversed: # t:O(1)
+                j = inversed[target - n] # t:O(1)
+                if i != j:
                     return [i, j]
