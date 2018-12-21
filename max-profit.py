@@ -24,15 +24,22 @@
 #     Explanation: In this case, no transaction is done, i.e. max profit = 0.
 
 class Solution:
-    # t:O(n²), s:O(1)
+    # t:O(n), s:O(1)
     def maxProfit(self, prices):
-        global_max_profit = 0
-        for i, buy_price in enumerate(prices): # t:O(n)
-            max_profit = 0
-            for sell_price in prices[i+1:]: # t:O(n)
-                max_profit = max(max_profit, sell_price - buy_price)
-            global_max_profit = max(global_max_profit, max_profit)
-        return global_max_profit
+        max_delta = 0
+        if not prices:
+            return max_delta
+        low = high = prices[0]
+        for price in prices: # t:O(n)
+            if price < low:
+                # Reset high because can't sell before buy.
+                low = high = price
+            elif price > high:
+                high = price
+                delta = high - low
+                if delta > max_delta:
+                    max_delta = delta
+        return max_delta
 
 print(Solution().maxProfit([7,1,5,3,6,4]), 5)
 print(Solution().maxProfit([7,6,4,3,1]), 0)
