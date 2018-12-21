@@ -29,14 +29,12 @@ class Solution:
         max_delta = 0
         if not prices:
             return max_delta
-        low = high = prices[0]
+        low = prices[0]
         for price in prices: # t:O(n)
             if price < low:
-                # Reset high because can't sell before buy.
-                low = high = price
-            elif price > high:
-                high = price
-                delta = high - low
+                low = price
+            else:
+                delta = price - low
                 if delta > max_delta:
                     max_delta = delta
         return max_delta
