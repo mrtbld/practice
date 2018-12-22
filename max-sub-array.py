@@ -15,14 +15,18 @@
 # the divide and conquer approach, which is more subtle.
 
 class Solution:
-    # O(n³)
+    # t:O(n), s:O(1)
     def maxSubArray(self, nums):
-        max_sum = None
-        for i in range(len(nums)): # O(n)
-            for j in range(i, len(nums)): # O(n)
-                subarray_sum = sum(nums[i:j+1]) # O(n)
-                if max_sum is None or subarray_sum > max_sum:
-                    max_sum = subarray_sum
+        if not nums:
+            return None
+        cur_sum = 0
+        max_sum = nums[0]
+        for n in nums: # t:O(n)
+            cur_sum += n
+            if cur_sum > max_sum:
+                max_sum = cur_sum
+            if cur_sum < 0:
+                cur_sum = 0
         return max_sum
 
 solution = Solution()
@@ -31,4 +35,5 @@ print(solution.maxSubArray([-1]), -1)
 print(solution.maxSubArray([-1,1,-1]), 1)
 print(solution.maxSubArray([-1,1,1,-1]), 2)
 print(solution.maxSubArray([0,0,1,0]), 1)
+print(solution.maxSubArray([-2,-1,-4,-2]), -1)
 print(solution.maxSubArray(list(range(-1000, 1000))), int((1000*(1000-1))/2))
