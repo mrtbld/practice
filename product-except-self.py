@@ -16,22 +16,18 @@
 # analysis.)
 
 class Solution:
-    # t:O(n), s:O(n + output)
+    # t:O(n), s:O(1 + output)
     def productExceptSelf(self, nums):
+        products = [1] * len(nums) # t:O(n), s:O(output)
         left_product = 1
-        left_products = []
         right_product = 1
-        right_products = []
-        for n in nums: # t:O(n)
+        for i, (n, m) in enumerate(zip(nums, reversed(nums))): # t:O(n), s:O(1)
             # Build products of all elements to the left of nums[i].
-            left_products.append(left_product) # t:O(1), s:O(n)
+            products[i] *= left_product # t:O(1), s:O(1)
             left_product *= n
-        for n in reversed(nums): # t:O(n)
-            # Build products of all elements to the right of nums[i].
-            right_products.append(right_product) # t:O(1), s:O(n)
-            right_product *= n
-        # Multiply left and right products to get final products.
-        return [a * b for a, b in zip(left_products, reversed(right_products))] # s:O(output)
+            products[-i-1] *= right_product # t:O(1), s:O(1)
+            right_product *= m
+        return products
 
 
 solution = Solution()
