@@ -25,6 +25,26 @@ MaxSubArrayValues = namedtuple(
 
 class Solution:
     def maxSubArray(self, nums):
+        """Return highest subarray sum, among all subarrays of nums.
+
+        >>> _ = Solution()
+        >>> _.maxSubArray([-2,1,-3,4,-1,2,1,-5,4])
+        6
+        >>> _.maxSubArray([-1])
+        -1
+        >>> _.maxSubArray([-1,1,-1])
+        1
+        >>> _.maxSubArray([-1,1,1,-1])
+        2
+        >>> _.maxSubArray([0,0,1,0])
+        1
+        >>> _.maxSubArray([-2,-1,-4,-2])
+        -1
+        >>> _.maxSubArray([31,-41,59,26,-53,58,97,-93,-23,84])
+        187
+        >>> _.maxSubArray(list(range(-1000, 1000)))
+        499500
+        """
         result = self.maxSubArrayAccumulator(nums)
         assert self.maxSubArrayDivideAndConquer(nums) == result
         return result
@@ -60,14 +80,3 @@ class Solution:
             whole=left.whole + right.whole,
             max=max(left.max_right + right.max_left, left.max, right.max),
         )
-
-
-solution = Solution()
-print(solution.maxSubArray([-2,1,-3,4,-1,2,1,-5,4]), 6)
-print(solution.maxSubArray([-1]), -1)
-print(solution.maxSubArray([-1,1,-1]), 1)
-print(solution.maxSubArray([-1,1,1,-1]), 2)
-print(solution.maxSubArray([0,0,1,0]), 1)
-print(solution.maxSubArray([-2,-1,-4,-2]), -1)
-print(solution.maxSubArray([31,-41,59,26,-53,58,97,-93,-23,84]), 187)
-print(solution.maxSubArray(list(range(-1000, 1000))), int((1000*(1000-1))/2))
