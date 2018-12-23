@@ -20,22 +20,15 @@ class Solution:
     def maxProduct(self, nums):
         if not nums:
             return None
-        product = 1
-        alt_product = None
         max_product = nums[0]
-        for n in nums: # t:O(n)
-            product *= n
-            if product > max_product:
-                max_product = product
-            if alt_product is not None:
-                alt_product *= n
-                if alt_product > max_product:
-                    max_product = alt_product
-            elif product < 0:
-                alt_product = 1
-            if product == 0:
-                alt_product = None
-                product = 1
+        for l in (nums, reversed(nums)): # t:O(n), s:O(1)
+            product = 1
+            for n in l: # t:O(n)
+                product *= n
+                if product > max_product:
+                    max_product = product
+                if product == 0:
+                    product = 1
         return max_product
 
 solution = Solution()
