@@ -17,21 +17,30 @@
 #       [-1, 0, 1],
 #       [-1, -1, 2]
 #     ]
+from collections import defaultdict
 
 class Solution:
-    # t:O(n³), s:O(1 + output)
+    # t:O(n²), s:O(n + output)
     def threeSum(self, nums):
         """
         >>> _ = Solution()
         >>> _.threeSum([-1, 0, 1, 2, -1, -4])
         [(-1, -1, 2), (-1, 0, 1)]
-        >>> _.threeSum(list(range(-2, 1000)))
-        [(-2, -1, 3), (-2, 0, 2), (-1, 0, 1)]
+        >>> _.threeSum(list(range(-2, 10000)))
+        [(-1, 0, 1), (-2, -1, 3), (-2, 0, 2)]
         """
-        tuples = set()
+        values_counts = defaultdict(int)
+        for n in nums:
+            values_counts[n] += 1
+        triplets = set()
         for i, a in enumerate(nums): # t:O(n)
-            for j, b in enumerate(nums[i + 1:], i + 1): # t:O(n)
-                for c in nums[j + 1:]: # t:O(n)
-                    if a + b + c == 0:
-                        tuples.add(tuple(sorted([a, b, c])))
-        return sorted(tuples)
+            for b in nums[i + 1:]: # t:O(n)
+                n = -(a+b)
+                count = values_counts[n]
+                if n == a:
+                    count -= 1
+                if n == b:
+                    count -= 1
+                if count > 0:
+                    triplets.add(tuple(sorted((n, a, b))))
+        return list(triplets)
