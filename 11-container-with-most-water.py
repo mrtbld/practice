@@ -28,7 +28,7 @@
 #     Output: 49
 
 class Solution:
-    # t:O(n*k), s:O(n)
+    # t:O(n), s:O(1)
     def maxArea(self, heights):
         """Return the size of the biggest rectangle formed by lines of
         given heights.
@@ -37,19 +37,15 @@ class Solution:
         >>> _.maxArea([1,8,6,2,5,4,8,3,7])
         49
         """
-        # min i and max i of all equal-or-taller lines, by height
-        min_max_i = dict()
-        for i, height in enumerate(heights):
-            for lower_height in range(height, -1, -1):
-                if lower_height in min_max_i:
-                    min_max_i[lower_height][1] = i
-                else:
-                    min_max_i[lower_height] = [i, i]
+        if len(heights) < 2:
+            return None
         max_volume = 0
-        for i, height in enumerate(heights):
-            farthest_at_level = max(
-                abs(i - min_max_i[height][0]),
-                abs(i - min_max_i[height][1]),
-            )
-            max_volume = max(max_volume, height * farthest_at_level)
+        i = 0
+        j = len(heights) - 1
+        while i != j:
+            max_volume = max(max_volume, (j - i) * min(heights[i], heights[j]))
+            if heights[i] < heights[j]:
+                i += 1
+            else:
+                j -= 1
         return max_volume
