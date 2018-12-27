@@ -14,16 +14,18 @@ class UndirectedGraphNode:
         self.neighbors = []
 
 class Solution:
-    def cloneGraph(self, node, m=None):
+    def cloneGraph(self, node):
         if node is None:
             return None
-        if m is None:
-            m = dict()
-        if node in m:
-            return m[node]
-        clone = UndirectedGraphNode(node.label)
-        m[node] = clone
-        clone.neighbors = []
-        for n in node.neighbors:
-            clone.neighbors.append(self.cloneGraph(n, m))
-        return clone
+        clones = {
+            node: UndirectedGraphNode(node.label),
+        }
+        stack = [node]
+        while stack:
+            n = stack.pop()
+            for neighbor in n.neighbors:
+                if neighbor not in clones:
+                    clones[neighbor] = UndirectedGraphNode(neighbor.label)
+                    stack.append(neighbor)
+                clones[n].neighbors.append(clones[neighbor])
+        return clones[node]
