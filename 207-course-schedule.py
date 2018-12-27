@@ -76,30 +76,22 @@ class Solution:
     # t:O(V+E), s:O(V+E)
     def canFinishIter(self, numCourses, prerequisites):
         adjacency_list = [[] for _ in range(numCourses)]
+        back_adjacency_counts = [0] * numCourses
         for a, b in prerequisites:
             adjacency_list[a].append(b)
+            back_adjacency_counts[b] += 1
 
-        # 0: not visited, 1: visiting (i.e. in stack), 2: visited
-        marks = [0] * numCourses
+        stack = [node for node, count in enumerate(back_adjacency_counts) if count == 0]
 
-        stack = []
-        i = 0
-        for root in range(numCourses):
-            if marks[root] != 0:
-                continue
-            marks[root] = 1
-            stack.append([root, 0])
-            while stack:
-                node, step = stack[-1]
-                if step == 0:
-                    stack[-1][1] += 1
-                    for n in adjacency_list[node]:
-                        if marks[n] == 0:
-                            marks[n] = 1
-                            stack.append([n, 0])
-                        elif marks[n] == 1:
-                            return False
-                else:
-                    marks[node] = 2
-                    stack.pop()
-        return True
+        # Iterate in topological order.
+        while stack:
+            node = stack.pop()
+            for n in adjacency_list[node]:
+                back_adjacency_counts[n] -= 1
+                if back_adjacency_counts[n] == 0:
+                    stack.append(n)
+
+        # If any backward edges remain, this indicates the presence of directed
+        # cycles, thus the dependency graph is not a DAG, thus it is not
+        # possible to satisfy every course prerequisites.
+        return not any(back_adjacency_counts)
