@@ -34,7 +34,7 @@
 #    prerequisites.
 
 class Solution:
-    # t:O(V+E), s:O(max(V²,V+E))
+    # t:O(V+E), s:O(V+E)
     def canFinish(self, numCourses, prerequisites):
         """Return whether the given prerequisites are valid, i.e. allow all
         courses to be finished. In other words, whether the dependency graph has
@@ -53,26 +53,16 @@ class Solution:
         for a, b in prerequisites:
             adjacency_list[a].append(b)
 
-        m = {}
+        # 0: not visited, 1: visiting, 2: visited
+        marks = [0] * numCourses
         def canFinishRecur(node):
-            if node in m:
-                return m[node]
-            m[node] = {node}
-            ancestors = set()
-            for n in adjacency_list[node]:
-                n_ancestors = canFinishRecur(n)
-                if n_ancestors is None:
-                    m[node] = None
-                    return None
-                ancestors |= n_ancestors
-            if node in ancestors:
-                m[node] = None
-                return None
-            ancestors.add(node)
-            m[node] = ancestors
-            return ancestors
-
-        for node in range(len(adjacency_list)):
-            if canFinishRecur(node) is None:
+            if marks[node] == 2:
+                return True
+            if marks[node] == 1:
                 return False
-        return True
+            marks[node] = 1
+            all_ancestors_can_finish = all(canFinishRecur(n) for n in adjacency_list[node])
+            marks[node] = 2
+            return all_ancestors_can_finish
+
+        return all(canFinishRecur(n) for n in range(numCourses))
