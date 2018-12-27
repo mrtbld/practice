@@ -34,7 +34,6 @@
 #    prerequisites.
 
 class Solution:
-    # t:O(V+E), s:O(V+E)
     def canFinish(self, numCourses, prerequisites):
         """Return whether the given prerequisites are valid, i.e. allow all
         courses to be finished. In other words, whether the dependency graph has
@@ -49,20 +48,58 @@ class Solution:
         >>> Solution().canFinish(7, [[0,1],[0,2],[4,3],[4,6],[6,3],[3,2],[2,4]])
         False
         """
+        recur_result = self.canFinishRecur(numCourses, prerequisites)
+        iter_result = self.canFinishIter(numCourses, prerequisites)
+        assert recur_result == iter_result
+        return recur_result
+
+    # t:O(V+E), s:O(V+E)
+    def canFinishRecur(self, numCourses, prerequisites):
         adjacency_list = [[] for _ in range(numCourses)]
         for a, b in prerequisites:
             adjacency_list[a].append(b)
 
         # 0: not visited, 1: visiting, 2: visited
         marks = [0] * numCourses
-        def canFinishRecur(node):
+        def _canFinishRecur(node):
             if marks[node] == 2:
                 return True
             if marks[node] == 1:
                 return False
             marks[node] = 1
-            all_ancestors_can_finish = all(canFinishRecur(n) for n in adjacency_list[node])
+            all_ancestors_can_finish = all(_canFinishRecur(n) for n in adjacency_list[node])
             marks[node] = 2
             return all_ancestors_can_finish
 
-        return all(canFinishRecur(n) for n in range(numCourses))
+        return all(_canFinishRecur(n) for n in range(numCourses))
+
+    # t:O(V+E), s:O(V+E)
+    def canFinishIter(self, numCourses, prerequisites):
+        adjacency_list = [[] for _ in range(numCourses)]
+        for a, b in prerequisites:
+            adjacency_list[a].append(b)
+
+        # 0: not visited, 1: visiting (i.e. in stack), 2: visited
+        marks = [0] * numCourses
+
+        stack = []
+        i = 0
+        for root in range(numCourses):
+            if marks[root] != 0:
+                continue
+            marks[root] = 1
+            stack.append([root, 0])
+            while stack:
+                node, step = stack[-1]
+                if step == 0:
+                    stack[-1][1] += 1
+                    for n in adjacency_list[node]:
+                        if marks[n] == 0:
+                            marks[n] = 1
+                            stack.append([n, 0])
+                        elif marks[n] == 1:
+                            return False
+                else:
+                    marks[node] = 2
+                    stack.pop()
+        return True
