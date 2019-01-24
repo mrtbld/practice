@@ -24,7 +24,7 @@
 #     Note that the answer must be a substring, "pwke" is a subsequence and not a substring.
 
 class Solution:
-    # t:O(n), s:O(1) (because char range is constant)
+    # t:O(n), s:O(1)
     def lengthOfLongestSubstring(self, s):
         """Return the longest substring with unique characters.
 
@@ -42,18 +42,20 @@ class Solution:
         0
         >>> Solution().lengthOfLongestSubstring('abacd')
         4
+        >>> Solution().lengthOfLongestSubstring('abcdefcghijklmn')
+        12
+        >>> Solution().lengthOfLongestSubstring('abcdefcghijklmnd')
+        12
         """
 
-        seen = set()
+        seen_index = dict()
         substring_start_i = 0
         max_substring_length = 0
         i = 0
         while i < len(s):
-            if s[i] in seen:
-                seen = set()
-                substring_start_i = substring_start_i + 1
-                i = substring_start_i
+            if s[i] in seen_index and seen_index[s[i]] >= substring_start_i:
+                substring_start_i = seen_index[s[i]] + 1
             max_substring_length = max(max_substring_length, i - substring_start_i + 1)
-            seen.add(s[i])
+            seen_index[s[i]] = i
             i += 1
         return max_substring_length
