@@ -33,23 +33,30 @@ class Solution:
         ''
         >>> Solution().minWindow('abbbbabbbabbabaa', 'aa')
         'aa'
+        >>> Solution().minWindow('abbbbabbbabbabaa'*100000, 'aa')
+        'aa'
         """
         if not s or not t:
             return ''
         min_window = None
-        i = j = 0
+        i = 0
+        j = -1
         l = len(s)
-        c = Counter(t)
+        c = defaultdict(int, Counter(t))
+        required = len(c)
         window_c = defaultdict(int)
-        window_c[s[0]] += 1
         while j < l:
-            if c - Counter(window_c):
+            if required:
                 j += 1
                 if j < l:
                     window_c[s[j]] += 1
+                    if window_c[s[j]] == c[s[j]]:
+                        required -= 1
             else:
                 if min_window is None or j - i < min_window[1] - min_window[0]:
                     min_window = (i, j)
+                if window_c[s[i]] == c[s[i]]:
+                    required += 1
                 window_c[s[i]] -= 1
                 i += 1
         if min_window is None:
