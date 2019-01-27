@@ -17,7 +17,7 @@
 #     Output: "bb"
 
 class Solution:
-    # t:O(n²), s:O(1)
+    # t:O(n), s:O(n)
     def longestPalindrome(self, s):
         """
         >>> Solution().longestPalindrome('babad')
@@ -36,15 +36,50 @@ class Solution:
         if not s:
             return ''
 
-        max_plalindrome_pos = (0, 0)
+        xs = ['_']
+        for c in s:
+            xs.append(c)
+            xs.append('_')
+
+        p = [0] * len(xs)
+
+        longest_center = 0
+
+        # "Current": largest enclosing palindrome.
+        current_center = 0
+        current_right = 0
+
         i = 0
-        for i in range(len(s)):
-            for ii, jj in ((i, i), (i, i + 1)):
-                while ii >= 0 and jj < len(s) and s[ii] == s[jj]:
-                    ii -= 1
-                    jj += 1
-                length = jj - ii - 1
-                if max_plalindrome_pos[1] < length:
-                    max_plalindrome_pos = (ii + 1, length)
-        max_i, max_l = max_plalindrome_pos
-        return s[max_i:max_i + max_l]
+        for i in range(len(xs)):
+            j = 1
+            if i <= current_right:
+                right_margin = current_right - i
+                mirror = current_center - (i - current_center)
+                if p[mirror] < right_margin:
+                    # Mirror palindrome, contained within current one.
+                    p[i] = p[mirror]
+                    continue
+                if right_margin == len(xs) - 1:
+                    # Mirror palindrome, contained within current one (because
+                    # at the end).
+                    p[i] = right_margin
+                    continue
+                if p[mirror] == right_margin:
+                    # Mirror palindrome, suffix of current one.
+                    j = p[mirror] + 1
+                elif p[mirror] > right_margin:
+                    # Mirror palindrome, extending outside current one.
+                    j = right_margin + 1
+            while i - j >= 0 and i + j < len(xs) and xs[i - j] == xs[i + j]:
+               j += 1
+            p[i] = j - 1
+            right = i + p[i]
+            if right > current_right:
+                current_center = i
+                current_right = right
+            if p[i] > p[longest_center]:
+                longest_center = i
+        return s[
+            (longest_center - p[longest_center]) // 2
+            :(longest_center + p[longest_center]) // 2
+        ]
