@@ -18,7 +18,7 @@
 from collections import defaultdict
 
 class Solution:
-    # t:O(n³), s:O(n)
+    # t:O(n²), s:O(n²)
     def longestPalindrome(self, s):
         """
         >>> Solution().longestPalindrome('babad')
@@ -31,6 +31,8 @@ class Solution:
         'bcdcbabcdcb'
         >>> Solution().longestPalindrome('abcdcbabcdcbzxxzzxxzzxxzzxxzzxxzzxxzzxxzzxxzmnm')
         'zxxzzxxzzxxzzxxzzxxzzxxzzxxzzxxz'
+        >>> Solution().longestPalindrome('aacdefcaa')
+        'aa'
         """
         if not s:
             return ''
@@ -38,6 +40,13 @@ class Solution:
         char_indexes = defaultdict(list)
         for i, c in enumerate(s):
             char_indexes[c].append(i)
+
+        m = dict()
+        def is_palindrome(i, j):
+            t = (i, j)
+            if t not in m:
+                m[t] = i >= j or (s[i] == s[j] and is_palindrome(i+1, j-1))
+            return m[t]
 
         # index, length
         max_plalindrome_pos = (0, 0)
@@ -47,16 +56,7 @@ class Solution:
                 length = j - i + 1
                 if max_plalindrome_pos[1] >= length:
                     break
-                ii = i
-                jj = j
-                is_palindrome = True
-                while ii < jj:
-                    if s[ii] != s[jj]:
-                        is_palindrome = False
-                        break
-                    ii += 1
-                    jj -= 1
-                if is_palindrome:
+                if is_palindrome(i, j):
                     max_plalindrome_pos = (i, length)
         max_i, max_l = max_plalindrome_pos
         return s[max_i:max_i + max_l]
