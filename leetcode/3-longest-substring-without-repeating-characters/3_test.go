@@ -1,6 +1,6 @@
 // https://leetcode.com/problems/longest-substring-without-repeating-characters/
 
-package leetcode3
+package leetcode
 
 import "testing"
 
