@@ -1,9 +1,7 @@
 package fiveohthree
 
-import "sort"
-
 func nextGreaterElements(nums []int) []int {
-	return nextGreaterElementsBinarySearch(nums)
+	return nextGreaterElementsLinear(nums)
 }
 
 // t:O(n²), s:O(n)
@@ -27,8 +25,8 @@ func nextGreaterElementsQuad(nums []int) []int {
 	return r
 }
 
-// t:O(n×log(n)), s:O(n)
-func nextGreaterElementsBinarySearch(nums []int) []int {
+// t:O(n), s:O(n)
+func nextGreaterElementsLinear(nums []int) []int {
 	if nums == nil {
 		return nil
 	}
@@ -58,18 +56,20 @@ func nextGreaterElementsBinarySearch(nums []int) []int {
 		j := (i + maxI) % l
 		n := nums[j]
 
-		// Binary search next greater number, since it's always sorted (desc).
-		g := sort.Search(len(nextGreatElems), func(k int) bool {
-			return nextGreatElems[k] <= n
-		})
-
-		if g == 0 {
-			r[j] = -1
-		} else {
-			r[j] = nextGreatElems[g-1]
+		var k int
+		for k = len(nextGreatElems) - 1; k >= 0; k-- {
+			if nextGreatElems[k] > n {
+				break
+			}
 		}
 
-		nextGreatElems = append(nextGreatElems[:g], n)
+		if k == -1 {
+			r[j] = -1
+		} else {
+			r[j] = nextGreatElems[k]
+		}
+
+		nextGreatElems = append(nextGreatElems[:k+1], n)
 	}
 	return r
 }

@@ -84,9 +84,9 @@ func Test_nextGreaterElementsQuad(t *testing.T) {
 	}
 }
 
-func Test_nextGreaterElementsBinarySearch(t *testing.T) {
+func Test_nextGreaterElementsLinear(t *testing.T) {
 	for _, c := range cases {
-		output := nextGreaterElementsBinarySearch(c.input)
+		output := nextGreaterElementsLinear(c.input)
 		if !reflect.DeepEqual(output, c.expected) {
 			t.Errorf("expected %#v to equal %#v for input %#v", output, c.expected, c.input)
 		}
@@ -110,7 +110,7 @@ func Benchmark_nextGreaterElementsQuad(b *testing.B) {
 	}
 }
 
-func Benchmark_nextGreaterElementsBinarySearch(b *testing.B) {
+func Benchmark_nextGreaterElementsLinear(b *testing.B) {
 	for i := 1; i <= N; i++ {
 		n := int(math.Pow10(i))
 		input := make([]int, n)
@@ -119,7 +119,7 @@ func Benchmark_nextGreaterElementsBinarySearch(b *testing.B) {
 		}
 		b.Run(strconv.Itoa(n), func(b *testing.B) {
 			for n := 0; n < b.N; n++ {
-				_ = nextGreaterElementsBinarySearch(input)
+				_ = nextGreaterElementsLinear(input)
 			}
 		})
 	}
