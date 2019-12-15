@@ -149,22 +149,25 @@ func main() {
 		}
 	}
 
-	in := make(chan int)
-	out := make(chan int)
-	e := make(chan error)
-	go run(intcodes, in, out, e)
+	for i := 1; i <= 2; i++ {
+		in := make(chan int)
+		out := make(chan int)
+		e := make(chan error)
+		go run(intcodes, in, out, e)
 
-	for {
-		select {
-		case <-in:
-			in <- 1
-		case v := <-out:
-			fmt.Println(v)
-		case err := <-e:
-			if !errors.Is(err, done) {
-				panic(err)
+		var isDone bool
+		for !isDone {
+			select {
+			case <-in:
+				in <- i
+			case v := <-out:
+				fmt.Printf("Part%d: %d\n", i, v)
+			case err := <-e:
+				if !errors.Is(err, done) {
+					panic(err)
+				}
+				isDone = true
 			}
-			return
 		}
 	}
 }
