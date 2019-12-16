@@ -40,8 +40,11 @@ func main() {
 			if i == j {
 				continue
 			}
+			// Compute polar coordinates of `b` from origin `a`
+			// (the candidate station) where min φ is "up"
+			// direction (cannon's start).
 			x, y := float64(b[0]-a[0]), float64(b[1]-a[1])
-			φ := math.Atan2(y, x)
+			φ := math.Atan2(-x, y)
 			r := math.Sqrt(x*x + y*y)
 			vm[φ] = append(vm[φ], r)
 		}
@@ -60,15 +63,7 @@ func main() {
 	}
 	sort.Float64s(φs)
 
-	var up int
-	for i, φ := range φs {
-		if φ >= -math.Pi/2 {
-			up = i
-			break
-		}
-	}
-
-	for i, j := 0, up; i < len(asteroids)-1; i, j = i+1, j+1 {
+	for i, j := 0, 0; i < len(asteroids)-1; i, j = i+1, j+1 {
 		φ := φs[j%len(φs)]
 		if len(vis[φ]) == 0 {
 			i--
@@ -76,8 +71,8 @@ func main() {
 		}
 		if i+1 == TARGET {
 			r := vis[φ][0]
-			x := station[0] + int(math.Round(r*math.Cos(φ)))
-			y := station[1] + int(math.Round(r*math.Sin(φ)))
+			x := station[0] - int(math.Round(r*math.Sin(φ)))
+			y := station[1] + int(math.Round(r*math.Cos(φ)))
 			fmt.Println(x*100 + y)
 			return
 		}
